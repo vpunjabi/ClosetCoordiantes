@@ -1,0 +1,54 @@
+extends layout
+
+block content
+  h1= title
+  p Welcome to #{title}
+  form#userCoordinates
+    |Enter Your Coordinates Below
+    br
+    |X: 
+    input(type="text", name="x")
+    | 
+    |Y: 
+    input(type="text", name="y")
+    | 
+    input(type="submit" value="Submit")
+  #container
+  script(src="http://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js")
+  script.
+    $("#userCoordinates").submit(function( event ) {
+      var xVal = $("input[name='x']").val();
+      var yVal = $("input[name='y']").val();
+      $.get("./query?x=" + xVal + "&y=" + yVal, function(data, status){
+        $("#container").html(createTable(data));
+      });
+      event.preventDefault();
+    });
+    function createTable(data){
+    	var table = document.createElement("table");
+    	table.setAttribute("class", "table table-striped");
+
+    	var header = document.createElement("thead");
+    	var y = document.createElement("tr");
+    	var z = document.createElement("th");
+    	var t = document.createTextNode("Closest Coordinates");
+    	z.appendChild(t);
+    	y.appendChild(z);
+    	header.appendChild(y);
+    	table.appendChild(header);
+
+    	var tbody = document.createElement("tbody");
+
+    	for(var i = 0; i < data.length; i++){
+            var y = document.createElement("tr");
+            var z = document.createElement("td");
+            var t = document.createTextNode(JSON.stringify(data[i]));
+            z.appendChild(t);
+            y.appendChild(z);
+            tbody.appendChild(y);
+    	}
+
+    	table.appendChild(tbody);
+
+    	return table;
+    }
